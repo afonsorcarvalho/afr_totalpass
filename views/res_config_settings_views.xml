@@ -14,17 +14,9 @@
                 >
                     <block title="API Asaas">
                         <setting
-                            string="Ambiente"
-                            help="Sandbox usa api-sandbox.asaas.com; produção usa api.asaas.com."
-                        >
-                            <field name="totalpass_asaas_environment"/>
-                        </setting>
-                        <setting
-                            string="Chave de API"
-                            help="Enviada no header access_token (documentação Asaas)."
-                        >
-                            <field name="totalpass_asaas_api_key" widget="password"/>
-                        </setting>
+                            string="Conta Asaas compartilhada"
+                            help="Chave de API, ambiente, token do webhook e taxas do cartão são os mesmos do Wellhub: configure em Configurações → Wellhub / Asaas. No painel Asaas, cadastre um webhook para /afr_totalpass/asaas/webhook com o mesmo token do Wellhub."
+                        />
                         <setting string="Timeout HTTP (segundos)">
                             <field name="totalpass_asaas_timeout"/>
                         </setting>
@@ -152,31 +144,6 @@
                             help="Taxa de referência divulgada pelo Asaas para o pacote de notificações por e-mail e SMS por transação; ajuste conforme Minha conta > Taxas. Documentação: https://docs.asaas.com/docs/notificacoes"
                         >
                             <field name="totalpass_notification_package_fee"/>
-                        </setting>
-                    </block>
-                    <block
-                        title="Taxa de cartão (repasse ao cliente)"
-                        name="totalpass_cc_fee_block"
-                    >
-                        <setting
-                            string="Taxa fixa (cartão)"
-                            help="Padrão público Asaas (cartão à vista): R$ 0,49 por cobrança. Confira valores atualizados em https://www.asaas.com/precos-e-taxas e no menu Taxas da sua conta."
-                        >
-                            <field name="totalpass_cc_fee_fixed"/>
-                        </setting>
-                        <setting
-                            string="Taxa percentual (cartão)"
-                            help="Padrão público (à vista): 2,99%. Promoção para novos clientes pode ser 1,99% (3 meses). Parcelamentos têm percentuais maiores na mesma página."
-                        >
-                            <field name="totalpass_cc_fee_percent"/>
-                        </setting>
-                    </block>
-                    <block title="Webhook">
-                        <setting
-                            string="Token do webhook (asaas-access-token)"
-                            help="Defina o mesmo valor no authToken do webhook no painel Asaas. URL: /afr_totalpass/asaas/webhook"
-                        >
-                            <field name="totalpass_asaas_webhook_token" widget="password"/>
                         </setting>
                     </block>
                 </app>

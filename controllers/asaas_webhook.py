@@ -54,7 +54,7 @@ class AfrTotalPassAsaasWebhook(http.Controller):
         expected = (
             request.env["ir.config_parameter"]
             .sudo()
-            .get_param("afr_totalpass.webhook_token", "")
+            .get_param("afr_wellhub.webhook_token", "")
         )
         received = (request.httprequest.headers.get("asaas-access-token") or "").strip()
         if not expected or received != expected:

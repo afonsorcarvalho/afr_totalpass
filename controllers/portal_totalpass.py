@@ -79,7 +79,7 @@ class AfrTotalPassPortal(http.Controller):
         cnpj = (partner.vat or "").strip() or "—"
         description = _("[Assinatura recorrente TotalPass] %s") % (collab.name or "")
         icp = env["ir.config_parameter"].sudo()
-        env_type = (icp.get_param("afr_totalpass.asaas_environment", "sandbox") or "sandbox").strip()
+        env_type = (icp.get_param("afr_wellhub.asaas_environment", "sandbox") or "sandbox").strip()
         asaas_host = (
             "sandbox.asaas.com" if env_type == "sandbox" else "www.asaas.com"
         )

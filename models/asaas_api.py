@@ -38,21 +38,21 @@ class AfrTotalPassAsaasApi(models.AbstractModel):
 
     @api.model
     def _base_url(self):
-        env_type = self._get_config_param("afr_totalpass.asaas_environment", "sandbox")
+        env_type = self._get_config_param("afr_wellhub.asaas_environment", "sandbox")
         if env_type == "production":
             return ASAAS_PRODUCTION
         return ASAAS_SANDBOX
 
     @api.model
     def _frontend_base_url(self):
-        env_type = self._get_config_param("afr_totalpass.asaas_environment", "sandbox")
+        env_type = self._get_config_param("afr_wellhub.asaas_environment", "sandbox")
         if env_type == "production":
             return ASAAS_FRONTEND_PRODUCTION
         return ASAAS_FRONTEND_SANDBOX
 
     @api.model
     def _api_key(self):
-        key = self._get_config_param("afr_totalpass.asaas_api_key", "")
+        key = self._get_config_param("afr_wellhub.asaas_api_key", "")
         if not key:
             raise UserError(_("Configure a chave de API Asaas nas configurações."))
         return key
@@ -294,7 +294,7 @@ class AfrTotalPassAsaasApi(models.AbstractModel):
     def _credit_card_fee_fixed(self):
         """Taxa fixa (R$) por cobrança recebida no cartão — padrão divulgado na página Asaas."""
         try:
-            return float(self._get_config_param("afr_totalpass.cc_fee_fixed", "0.49") or 0)
+            return float(self._get_config_param("afr_wellhub.cc_fee_fixed", "0.49") or 0)
         except ValueError:
             return 0.49
 
@@ -302,7 +302,7 @@ class AfrTotalPassAsaasApi(models.AbstractModel):
     def _credit_card_fee_percent(self):
         """Percentual sobre o valor total (cartão à vista na tabela pública Asaas)."""
         try:
-            return float(self._get_config_param("afr_totalpass.cc_fee_percent", "2.99") or 0)
+            return float(self._get_config_param("afr_wellhub.cc_fee_percent", "2.99") or 0)
         except ValueError:
             return 2.99
 

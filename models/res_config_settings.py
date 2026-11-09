@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Parâmetros globais Asaas / TotalPass (ir.config_parameter)."""
+"""Parâmetros TotalPass (ir.config_parameter).
+
+Conexão Asaas (API key, ambiente, token do webhook, taxas do cartão) é a mesma conta do
+Wellhub: lida das chaves ``afr_wellhub.*`` e configurada em Configurações → Wellhub / Asaas.
+"""
 
 from odoo import api, fields, models
 
@@ -7,22 +11,6 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    totalpass_asaas_api_key = fields.Char(
-        string="Chave de API Asaas",
-        config_parameter="afr_totalpass.asaas_api_key",
-        help="Token access_token enviado no header das requisições (documentação Asaas).",
-    )
-    totalpass_asaas_environment = fields.Selection(
-        selection=[("sandbox", "Sandbox"), ("production", "Produção")],
-        string="Ambiente Asaas",
-        config_parameter="afr_totalpass.asaas_environment",
-        default="sandbox",
-    )
-    totalpass_asaas_webhook_token = fields.Char(
-        string="Token do webhook Asaas",
-        config_parameter="afr_totalpass.webhook_token",
-        help="Deve coincidir com o authToken configurado no webhook Asaas; validação via header asaas-access-token (documentação Asaas).",
-    )
     totalpass_default_subscription_value = fields.Float(
         string="Valor padrão da assinatura",
         default=0.0,
@@ -55,19 +43,6 @@ class ResConfigSettings(models.TransientModel):
     totalpass_asaas_timeout = fields.Integer(
         string="Timeout HTTP (s)",
         default=30,
-    )
-    totalpass_cc_fee_fixed = fields.Float(
-        string="Taxa fixa cartão (R$)",
-        default=0.49,
-        help="Padrão público Asaas (cartão à vista): R$ 0,49 por cobrança recebida. "
-        "Confira valores atualizados em https://www.asaas.com/precos-e-taxas e no menu Taxas da sua conta.",
-    )
-    totalpass_cc_fee_percent = fields.Float(
-        string="Taxa percentual cartão (%)",
-        default=2.99,
-        help="Padrão público Asaas (cartão à vista): 2,99% sobre o valor total. "
-        "Promoção para novos clientes pode ser 1,99% (3 meses). "
-        "Parcelamentos têm percentuais maiores na mesma página.",
     )
     totalpass_notification_package_fee = fields.Float(
         string="Pacote notif. e-mail + SMS (R$)",
@@ -217,12 +192,6 @@ class ResConfigSettings(models.TransientModel):
         res["totalpass_asaas_timeout"] = int(
             icp.get_param("afr_totalpass.asaas_timeout", "30") or 30
         )
-        res["totalpass_cc_fee_fixed"] = float(
-            icp.get_param("afr_totalpass.cc_fee_fixed", "0.49") or 0
-        )
-        res["totalpass_cc_fee_percent"] = float(
-            icp.get_param("afr_totalpass.cc_fee_percent", "2.99") or 0
-        )
         res["totalpass_notification_package_fee"] = float(
             icp.get_param("afr_totalpass.notification_package_fee", "0.99") or 0
         )
@@ -298,14 +267,6 @@ class ResConfigSettings(models.TransientModel):
         icp.set_param(
             "afr_totalpass.asaas_timeout",
             str(int(self.totalpass_asaas_timeout or 30)),
-        )
-        icp.set_param(
-            "afr_totalpass.cc_fee_fixed",
-            str(float(self.totalpass_cc_fee_fixed or 0)),
-        )
-        icp.set_param(
-            "afr_totalpass.cc_fee_percent",
-            str(float(self.totalpass_cc_fee_percent or 0)),
         )
         icp.set_param(
             "afr_totalpass.notification_package_fee",
