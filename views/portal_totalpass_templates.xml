@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sprite SVG: ícones inline reutilizados pelos templates do portal. -->
+    <template id="tp_icon_sprite" name="TotalPass: sprite de ícones SVG">
+        <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true" focusable="false">
+            <symbol id="tp-i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8"/>
+            </symbol>
+            <symbol id="tp-i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="m3 7 9 6 9-6"/>
+            </symbol>
+            <symbol id="tp-i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92V20a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 2 4.18 2 2 0 0 1 4 2h3.08a2 2 0 0 1 2 1.72c.12.89.33 1.76.62 2.6a2 2 0 0 1-.45 2.11L8 9.76a16 16 0 0 0 6.24 6.24l1.33-1.25a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.6.62a2 2 0 0 1 1.72 2z"/>
+            </symbol>
+            <symbol id="tp-i-id-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.5" y="5" width="19" height="14" rx="2"/>
+                <circle cx="8.5" cy="12" r="2.2"/>
+                <path d="M13 10h6M13 14h4M5.5 17.2c.8-1.4 2-2.2 3-2.2s2.2.8 3 2.2"/>
+            </symbol>
+            <symbol id="tp-i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m5 12 5 5L20 7"/>
+            </symbol>
+            <symbol id="tp-i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 6l12 12M18 6 6 18"/>
+            </symbol>
+            <symbol id="tp-i-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <path d="M12 3a9 9 0 1 0 9 9" opacity=".35"/>
+                <path d="M21 12a9 9 0 0 0-9-9"/>
+            </symbol>
+            <symbol id="tp-i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 5l7 7-7 7"/>
+            </symbol>
+            <symbol id="tp-i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>
+            </symbol>
+            <symbol id="tp-i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 8h.01M11 12h1v5h1"/>
+            </symbol>
+            <symbol id="tp-i-play" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+            </symbol>
+            <symbol id="tp-i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>
+                <path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01"/>
+            </symbol>
+            <symbol id="tp-i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v12M8 11l4 4 4-4M5 21h14"/>
+            </symbol>
+            <symbol id="tp-i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/>
+                <circle cx="12" cy="10" r="2.5"/>
+            </symbol>
+            <symbol id="tp-i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20.5 3.8 12.3a5 5 0 0 1 7.1-7.05L12 6.3l1.1-1.05a5 5 0 0 1 7.1 7.05z"/>
+            </symbol>
+            <symbol id="tp-i-dumbbell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6.5 6.5 17.5 17.5M4 8l-1.5 1.5a1.5 1.5 0 0 0 0 2.1L4 13M20 16l1.5-1.5a1.5 1.5 0 0 0 0-2.1L20 11M8 4 6.5 5.5a1.5 1.5 0 0 0 0 2.1L8 9M16 15l1.5 1.5a1.5 1.5 0 0 1 0 2.1L16 20"/>
+            </symbol>
+            <symbol id="tp-i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4.5" width="18" height="16" rx="2"/>
+                <path d="M3 9h18M8 3v3M16 3v3"/>
+            </symbol>
+            <symbol id="tp-i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3z"/>
+            </symbol>
+        </svg>
+    </template>
+
+    <template id="portal_totalpass_inscricao_form" name="TotalPass: formulário de inscrição">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero" aria-label="Cabeçalho Inscrição TotalPass">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-sparkle"/></svg>
+                            Benefício TotalPass
+                        </span>
+                        <h1 class="tp-hero__title">Ative sua inscrição colaborador</h1>
+                        <p class="tp-hero__subtitle">
+                            Preencha seus dados para receber o link de confirmação por e-mail e concluir a sua inscrição no benefício TotalPass.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-card">
+                            <div class="tp-card__grid">
+                                <div class="tp-form-wrap">
+                                    <div t-if="error" class="tp-alert tp-alert--danger" role="alert">
+                                        <span class="tp-alert__icon" aria-hidden="true">
+                                            <svg><use href="#tp-i-x"/></svg>
+                                        </span>
+                                        <div class="tp-alert__body">
+                                            <t t-out="error"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="tp-progress" aria-hidden="true">
+                                        <span class="tp-progress__label"><span class="tp-progress__count">0</span> de 9</span>
+                                        <div class="tp-progress__bar"/>
+                                    </div>
+
+                                    <form action="/afr_totalpass/inscricao" method="post" class="totalpass_portal_inscricao_form tp-form" novalidate="novalidate">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                        <div class="tp-field" data-tp-field="name" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-user"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_name" name="name" required="required"
+                                                       autocomplete="name"
+                                                       placeholder=" "
+                                                       aria-describedby="tp_name_feedback"
+                                                       t-att-value="values.get('name') or ''"/>
+                                                <label class="tp-field__label" for="tp_name">Nome completo</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_name_feedback" class="tp-field__feedback" aria-live="polite"></small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="email" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-mail"/></svg>
+                                                </span>
+                                                <input type="email" class="tp-field__input" id="tp_email" name="email" required="required"
+                                                       autocomplete="email" inputmode="email"
+                                                       placeholder=" "
+                                                       aria-describedby="tp_email_feedback"
+                                                       t-att-value="values.get('email') or ''"/>
+                                                <label class="tp-field__label" for="tp_email">E-mail</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_email_feedback" class="tp-field__feedback" aria-live="polite">Será usado para o link de confirmação.</small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="phone" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-phone"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_phone" name="phone" required="required"
+                                                       placeholder=" "
+                                                       aria-describedby="tp_phone_feedback"
+                                                       t-att-value="values.get('phone') or ''"/>
+                                                <label class="tp-field__label" for="tp_phone">Telefone (com DDD)</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_phone_feedback" class="tp-field__feedback" aria-live="polite">10 dígitos (fixo) ou 11 (celular).</small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="cpf" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-id-card"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_cpf" name="cpf_cnpj" required="required"
+                                                       placeholder=" "
+                                                       aria-describedby="tp_cpf_feedback"
+                                                       t-att-value="values.get('cpf_cnpj') or ''"/>
+                                                <label class="tp-field__label" for="tp_cpf">CPF</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_cpf_feedback" class="tp-field__feedback" aria-live="polite">Validação pelos dígitos verificadores.</small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="postal_code" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-mail"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_postal_code" name="postal_code" required="required"
+                                                       placeholder=" " inputmode="numeric" maxlength="9"
+                                                       autocomplete="postal-code"
+                                                       aria-describedby="tp_postal_code_feedback"
+                                                       t-att-value="values.get('postal_code') or ''"/>
+                                                <label class="tp-field__label" for="tp_postal_code">CEP</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_postal_code_feedback" class="tp-field__feedback" aria-live="polite">8 dígitos (ex.: 65000-000).</small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="street" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-mail"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_street" name="street" required="required"
+                                                       placeholder=" "
+                                                       autocomplete="street-address"
+                                                       aria-describedby="tp_street_feedback"
+                                                       t-att-value="values.get('street') or ''"/>
+                                                <label class="tp-field__label" for="tp_street">Logradouro</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_street_feedback" class="tp-field__feedback" aria-live="polite">Rua, avenida, travessa, etc.</small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="street_number" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-mail"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_street_number" name="street_number" required="required"
+                                                       placeholder=" "
+                                                       aria-describedby="tp_street_number_feedback"
+                                                       t-att-value="values.get('street_number') or ''"/>
+                                                <label class="tp-field__label" for="tp_street_number">Número</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_street_number_feedback" class="tp-field__feedback" aria-live="polite">Use S/N se não houver.</small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="city" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-mail"/></svg>
+                                                </span>
+                                                <input type="text" class="tp-field__input" id="tp_city" name="city" required="required"
+                                                       placeholder=" "
+                                                       autocomplete="address-level2"
+                                                       aria-describedby="tp_city_feedback"
+                                                       t-att-value="values.get('city') or ''"/>
+                                                <label class="tp-field__label" for="tp_city">Cidade</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_city_feedback" class="tp-field__feedback" aria-live="polite"></small>
+                                        </div>
+
+                                        <div class="tp-field" data-tp-field="state_uf" data-tp-status="idle">
+                                            <div class="tp-field__control">
+                                                <span class="tp-field__icon" aria-hidden="true">
+                                                    <svg><use href="#tp-i-mail"/></svg>
+                                                </span>
+                                                <select class="tp-field__input" id="tp_state_uf" name="state_uf" required="required"
+                                                        autocomplete="address-level1"
+                                                        aria-describedby="tp_state_uf_feedback">
+                                                    <option value="">UF</option>
+                                                    <t t-foreach="[('AC','Acre'),('AL','Alagoas'),('AP','Amapá'),('AM','Amazonas'),('BA','Bahia'),('CE','Ceará'),('DF','Distrito Federal'),('ES','Espírito Santo'),('GO','Goiás'),('MA','Maranhão'),('MT','Mato Grosso'),('MS','Mato Grosso do Sul'),('MG','Minas Gerais'),('PA','Pará'),('PB','Paraíba'),('PR','Paraná'),('PE','Pernambuco'),('PI','Piauí'),('RJ','Rio de Janeiro'),('RN','Rio Grande do Norte'),('RS','Rio Grande do Sul'),('RO','Rondônia'),('RR','Roraima'),('SC','Santa Catarina'),('SP','São Paulo'),('SE','Sergipe'),('TO','Tocantins')]" t-as="uf">
+                                                        <option t-att-value="uf[0]" t-att-selected="values.get('state_uf') == uf[0]"><t t-out="uf[0]"/> — <t t-out="uf[1]"/></option>
+                                                    </t>
+                                                </select>
+                                                <label class="tp-field__label" for="tp_state_uf">UF</label>
+                                                <span class="tp-field__status" aria-hidden="true">
+                                                    <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                                    <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                                </span>
+                                            </div>
+                                            <small id="tp_state_uf_feedback" class="tp-field__feedback" aria-live="polite">Selecione o estado.</small>
+                                        </div>
+
+                                        <button type="submit" class="tp-btn-primary" data-state="idle">
+                                            <span class="tp-btn-primary__icon-idle" aria-hidden="true">
+                                                <svg width="20" height="20"><use href="#tp-i-arrow-right"/></svg>
+                                            </span>
+                                            <span class="tp-btn-primary__icon-loading" aria-hidden="true">
+                                                <svg width="20" height="20"><use href="#tp-i-spinner"/></svg>
+                                            </span>
+                                            <span class="tp-btn-primary__icon-success" aria-hidden="true">
+                                                <svg width="20" height="20"><use href="#tp-i-check"/></svg>
+                                            </span>
+                                            <span class="tp-btn-primary__label-idle">Enviar inscrição</span>
+                                            <span class="tp-btn-primary__label-loading">Enviando…</span>
+                                            <span class="tp-btn-primary__label-success">Pronto!</span>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <aside class="tp-media" aria-label="Sobre o TotalPass">
+                                    <span class="tp-media__eyebrow">
+                                        <svg width="12" height="12" aria-hidden="true"><use href="#tp-i-info"/></svg>
+                                        Benefício TotalPass
+                                    </span>
+                                    <p class="tp-media__title">Como funciona</p>
+                                    <p class="tp-media__caption">Inscreva-se, confirme pelo e-mail e cadastre o cartão para a mensalidade.</p>
+                                    <a class="tp-btn-secondary" href="/afr_totalpass/como-funciona">
+                                        <svg width="16" height="16" aria-hidden="true"><use href="#tp-i-arrow-right"/></svg>
+                                        Ver passo a passo
+                                    </a>
+                                </aside>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_inscricao_done" name="TotalPass: inscrição enviada">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Cabeçalho inscrição enviada">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-mail"/></svg>
+                            Confirmação a caminho
+                        </span>
+                        <h1 class="tp-hero__title">Inscrição quase pronta</h1>
+                        <p class="tp-hero__subtitle">Falta só um passo para ativar o seu benefício TotalPass.</p>
+                    </div>
+                </section>
+
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card">
+                            <div class="tp-success-card__icon" aria-hidden="true">
+                                <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle class="tp-success-draw-ring" cx="28" cy="28" r="26"/>
+                                    <path class="tp-success-draw-check" d="m16 28 8 8 16-18"/>
+                                </svg>
+                            </div>
+                            <h2 class="tp-success-card__title">Verifique o seu e-mail</h2>
+                            <p class="tp-success-card__body">
+                                Enviamos uma mensagem com o link de confirmação para
+                                <span class="tp-pill"><t t-out="email"/></span>.
+                                Abra o link para ativar a inscrição colaborador TotalPass.
+                            </p>
+
+                            <ol class="tp-tips" aria-label="Dicas para localizar o e-mail">
+                                <li class="tp-tips__item">
+                                    <span class="tp-tips__num">1</span>
+                                    <p class="tp-tips__text">Procure na <strong>caixa de entrada</strong> uma mensagem com o assunto de confirmação.</p>
+                                </li>
+                                <li class="tp-tips__item">
+                                    <span class="tp-tips__num">2</span>
+                                    <p class="tp-tips__text">Se não aparecer em alguns minutos, cheque <strong>spam</strong> e <strong>promoções</strong>.</p>
+                                </li>
+                                <li class="tp-tips__item">
+                                    <span class="tp-tips__num">3</span>
+                                    <p class="tp-tips__text"><strong>Clique no link</strong> recebido para ativar a inscrição.</p>
+                                </li>
+                            </ol>
+
+                            <p style="margin-top: 20px; font-size: 0.88rem; color: var(--tp-ink-500);">
+                                Não recebeu o e-mail?
+                                <a href="/afr_totalpass/inscricao/reenviar" style="color: var(--tp-primary); font-weight: 600;">
+                                    Reenviar link de ativação →
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_ativar_result" name="TotalPass: resultado da ativação">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Resultado da ativação">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-sparkle"/></svg>
+                            Ativação
+                        </span>
+                        <h1 class="tp-hero__title">Ativação da inscrição</h1>
+                        <p class="tp-hero__subtitle" t-if="ok">Sua inscrição foi confirmada. Finalize o pagamento para concluir.</p>
+                        <p class="tp-hero__subtitle" t-if="not ok">Não conseguimos confirmar sua ativação. Veja os detalhes abaixo.</p>
+                    </div>
+                </section>
+
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-alert tp-alert--success" role="status" t-if="ok">
+                            <span class="tp-alert__icon" aria-hidden="true">
+                                <svg><use href="#tp-i-check"/></svg>
+                            </span>
+                            <div class="tp-alert__body" t-out="message"/>
+                        </div>
+
+                        <div class="tp-alert tp-alert--warning" role="alert" t-if="not ok">
+                            <span class="tp-alert__icon" aria-hidden="true">
+                                <svg><use href="#tp-i-info"/></svg>
+                            </span>
+                            <div class="tp-alert__body" t-out="message"/>
+                        </div>
+
+                        <div class="tp-steps-card" t-if="ok" aria-label="Próximos passos após a ativação">
+                            <h2 class="tp-steps-card__title">Próximos passos — leia com atenção</h2>
+                            <ol class="tp-steps">
+                                <li class="tp-steps__item">
+                                    <strong>Verifique o seu e-mail</strong> (o mesmo cadastrado na inscrição). A plataforma Asaas envia nesse endereço a mensagem com o link da cobrança criada. Confira também a pasta de spam ou promoções.
+                                </li>
+                                <li class="tp-steps__item">
+                                    <strong>A ativação da sua inscrição só fica concluída após o pagamento.</strong>
+                                    Acesse o link recebido por e-mail, abra a cobrança na Asaas e finalize o pagamento conforme as instruções na página.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- Prévia do e-mail de cobrança Asaas (layout fiel ao enviado pela plataforma; preservado). -->
+                        <div class="tp-preview-wrap" t-if="ok and show_asaas_email_preview">
+                            <p class="tp-preview-note">
+                                <strong>Exemplo ilustrativo</strong> do e-mail que a Asaas envia quando a cobrança é criada.
+                                Os valores refletem sua assinatura atual; o link real chega <strong>somente</strong> na mensagem enviada ao seu e-mail.
+                            </p>
+                            <div
+                                class="rounded-2 shadow-sm overflow-hidden mx-auto"
+                                style="max-width: 640px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; color: #222;"
+                            >
+                                <div style="background-color: #0d2847; color: #fff; padding: 22px 20px;">
+                                    <div style="font-size: 16px; font-weight: 600;" t-out="preview_company_name"/>
+                                    <div style="font-size: 14px; margin-top: 6px; opacity: 0.95;" t-out="preview_company_cnpj"/>
+                                </div>
+                                <div style="background: #fff; padding: 26px 22px;">
+                                    <h2 class="text-center fw-bold mb-2" style="font-size: 1.15rem;">Cobrança criada</h2>
+                                    <hr class="my-3" style="border-color: #ddd;"/>
+                                    <p class="mb-3">
+                                        Olá, <t t-out="preview_customer_name"/>
+                                    </p>
+                                    <p class="mb-3 lh-base">
+                                        <span t-out="preview_company_name"/>
+                                        gerou uma cobrança para você, no valor de
+                                        <strong t-out="preview_amount_str"/>
+                                        com vencimento em
+                                        <strong t-out="preview_due_str"/>.
+                                    </p>
+                                    <p class="mb-2 fw-bold">Descrição da cobrança:</p>
+                                    <p class="mb-4" t-out="preview_description"/>
+                                    <p class="mb-2 small text-muted">
+                                        Clique no botão abaixo para visualizar a cobrança. Ou acesse o link:
+                                    </p>
+                                    <p class="mb-4" style="word-break: break-all; font-size: 13px;">
+                                        <span t-out="preview_link_example"/>
+                                    </p>
+                                    <p class="text-muted fst-italic small mb-4">
+                                        (Formato ilustrativo — o endereço exato será o que a Asaas enviar no e-mail.)
+                                    </p>
+                                    <div class="text-center">
+                                        <span
+                                            class="d-inline-block px-4 py-2 rounded-pill text-white fw-semibold"
+                                            style="background-color: #00a86b; cursor: default; user-select: none;"
+                                        >
+                                            Visualizar cobrança
+                                        </span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="text-center small px-3 py-4 lh-base"
+                                    style="background-color: #f0f0f0; color: #444;"
+                                >
+                                    <t t-foreach="preview_footer_lines" t-as="fline">
+                                        <div class="mb-0"><t t-out="fline"/></div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_reenviar_form" name="TotalPass: reenviar e-mail de ativação">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Reenviar e-mail de ativação">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-mail"/></svg>
+                            Reenviar confirmação
+                        </span>
+                        <h1 class="tp-hero__title">Reenviar link de ativação</h1>
+                        <p class="tp-hero__subtitle">Informe o e-mail cadastrado e enviaremos um novo link de confirmação.</p>
+                    </div>
+                </section>
+
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card" style="max-width: 480px;">
+                            <div t-if="error" class="tp-alert tp-alert--danger" role="alert">
+                                <span class="tp-alert__icon" aria-hidden="true">
+                                    <svg><use href="#tp-i-x"/></svg>
+                                </span>
+                                <div class="tp-alert__body"><t t-out="error"/></div>
+                            </div>
+
+                            <form action="/afr_totalpass/inscricao/reenviar" method="post" class="tp-form" novalidate="novalidate">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <div class="tp-field" data-tp-field="email" data-tp-status="idle">
+                                    <div class="tp-field__control">
+                                        <span class="tp-field__icon" aria-hidden="true">
+                                            <svg><use href="#tp-i-mail"/></svg>
+                                        </span>
+                                        <input type="email" class="tp-field__input" id="tp_reenviar_email"
+                                               name="email" required="required"
+                                               autocomplete="email" inputmode="email"
+                                               placeholder=" "
+                                               aria-describedby="tp_reenviar_email_feedback"
+                                               t-att-value="email_value or ''"/>
+                                        <label class="tp-field__label" for="tp_reenviar_email">E-mail cadastrado</label>
+                                        <span class="tp-field__status" aria-hidden="true">
+                                            <span class="tp-field__status-valid"><svg><use href="#tp-i-check"/></svg></span>
+                                            <span class="tp-field__status-invalid"><svg><use href="#tp-i-x"/></svg></span>
+                                        </span>
+                                    </div>
+                                    <small id="tp_reenviar_email_feedback" class="tp-field__feedback" aria-live="polite">
+                                        O mesmo e-mail usado no cadastro.
+                                    </small>
+                                </div>
+
+                                <button type="submit" class="tp-btn-primary" style="margin-top: 8px;">
+                                    <span class="tp-btn-primary__icon-idle" aria-hidden="true">
+                                        <svg width="20" height="20"><use href="#tp-i-arrow-right"/></svg>
+                                    </span>
+                                    <span class="tp-btn-primary__label-idle">Reenviar link</span>
+                                </button>
+                            </form>
+
+                            <p style="text-align:center; margin-top: 20px; font-size: 0.88rem;">
+                                <a href="/afr_totalpass/inscricao" style="color: var(--tp-primary);">← Voltar ao cadastro</a>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_reenviar_done" name="TotalPass: reenvio solicitado">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Reenvio solicitado">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-check"/></svg>
+                            Solicitação enviada
+                        </span>
+                        <h1 class="tp-hero__title">Verifique o seu e-mail</h1>
+                        <p class="tp-hero__subtitle">Se houver inscrição pendente, o link foi reenviado.</p>
+                    </div>
+                </section>
+
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card" style="max-width: 560px;">
+                            <div class="tp-success-card__icon" aria-hidden="true">
+                                <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle class="tp-success-draw-ring" cx="28" cy="28" r="26"/>
+                                    <path class="tp-success-draw-check" d="m16 28 8 8 16-18"/>
+                                </svg>
+                            </div>
+                            <h2 class="tp-success-card__title">Solicitação recebida</h2>
+                            <p class="tp-success-card__body">
+                                Se houver uma inscrição pendente para esse e-mail, enviaremos o link de ativação em instantes.
+                                Verifique também spam e promoções.
+                            </p>
+
+                            <ol class="tp-tips" aria-label="Próximos passos">
+                                <li class="tp-tips__item">
+                                    <span class="tp-tips__num">1</span>
+                                    <p class="tp-tips__text">Aguarde alguns minutos e verifique o <strong>e-mail cadastrado</strong>.</p>
+                                </li>
+                                <li class="tp-tips__item">
+                                    <span class="tp-tips__num">2</span>
+                                    <p class="tp-tips__text">Cheque também <strong>spam</strong> e <strong>promoções</strong>.</p>
+                                </li>
+                                <li class="tp-tips__item">
+                                    <span class="tp-tips__num">3</span>
+                                    <p class="tp-tips__text"><strong>Clique no link</strong> recebido para ativar a inscrição.</p>
+                                </li>
+                            </ol>
+
+                            <a class="tp-btn-secondary" href="/">
+                                <svg width="16" height="16" aria-hidden="true" style="transform: rotate(180deg);"><use href="#tp-i-arrow-right"/></svg>
+                                Voltar ao site
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_preparando_checkout" name="TotalPass: preparando link de pagamento">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Preparando link de pagamento">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-sparkle"/></svg>
+                            Preparando seu pagamento
+                        </span>
+                        <h1 class="tp-hero__title">Estamos quase lá</h1>
+                        <p class="tp-hero__subtitle">Aguarde alguns segundos enquanto geramos seu link de pagamento seguro.</p>
+                    </div>
+                </section>
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card" role="status" aria-live="polite">
+                            <div class="tp-success-card__icon" aria-hidden="true">
+                                <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">
+                                    <circle cx="28" cy="28" r="22" stroke-opacity="0.18"/>
+                                    <path d="M 50 28 a 22 22 0 0 1 -22 22">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 28 28" to="360 28 28" dur="1s" repeatCount="indefinite"/>
+                                    </path>
+                                </svg>
+                            </div>
+                            <h2 class="tp-success-card__title">Gerando seu link…</h2>
+                            <p class="tp-success-card__body">
+                                Estamos confirmando seu cadastro com o processador de pagamento.
+                                Esta página atualiza sozinha quando estiver pronta — não feche o navegador.
+                            </p>
+                            <p style="margin-top: 16px; font-size: 0.85rem; color: var(--tp-ink-500);">
+                                Tempo decorrido: aproximadamente <t t-out="elapsed_seconds"/> s.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                <script t-attf-data-reload-base="/afr_totalpass/inscricao/ativar?token=#{token or ''}">
+                    (function () {
+                        var script = document.currentScript;
+                        var base = script &amp;&amp; script.getAttribute('data-reload-base');
+                        if (!base) { return; }
+                        setTimeout(function () {
+                            // Cache-buster: cada reload usa querystring única para impedir o browser
+                            // de reaproveitar a resposta anterior do spinner (que retornaria 200
+                            // em vez do 303 atual do backend).
+                            var sep = base.indexOf('?') === -1 ? '?' : '&amp;';
+                            window.location.replace(base + sep + '_=' + Date.now());
+                        }, 2000);
+                    })();
+                </script>
+                <noscript>
+                    <meta http-equiv="refresh" t-att-content="'3; url=/afr_totalpass/inscricao/ativar?token=' + (token or '')"/>
+                </noscript>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_checkout_sucesso" name="TotalPass: pagamento recebido">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Pagamento recebido">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-sparkle"/></svg>
+                            Pagamento recebido
+                        </span>
+                        <h1 class="tp-hero__title">Tudo certo</h1>
+                        <p class="tp-hero__subtitle">Sua assinatura TotalPass será ativada em instantes.</p>
+                    </div>
+                </section>
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card">
+                            <div class="tp-success-card__icon" aria-hidden="true">
+                                <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle class="tp-success-draw-ring" cx="28" cy="28" r="26"/>
+                                    <path class="tp-success-draw-check" d="m16 28 8 8 16-18"/>
+                                </svg>
+                            </div>
+                            <h2 class="tp-success-card__title">Pagamento confirmado</h2>
+                            <p class="tp-success-card__body">
+                                Recebemos a confirmação do seu pagamento. A assinatura será ativada
+                                após o processamento final pelo Asaas.
+                                Você receberá um e-mail com os detalhes.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_checkout_cancelado" name="TotalPass: pagamento cancelado">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Pagamento cancelado">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-mail"/></svg>
+                            Pagamento cancelado
+                        </span>
+                        <h1 class="tp-hero__title">Pagamento não concluído</h1>
+                        <p class="tp-hero__subtitle">Você cancelou ou fechou a página de pagamento.</p>
+                    </div>
+                </section>
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card">
+                            <h2 class="tp-success-card__title">Quer tentar novamente?</h2>
+                            <p class="tp-success-card__body">
+                                Seu link de ativação ainda pode estar válido. Volte ao e-mail
+                                que recebemos e clique no link novamente para abrir a página
+                                de pagamento. Se o link já expirou, solicite um novo.
+                            </p>
+                            <a class="tp-btn-secondary" href="/afr_totalpass/inscricao/reenviar">
+                                <svg width="16" height="16" aria-hidden="true"><use href="#tp-i-mail"/></svg>
+                                Solicitar novo link
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_checkout_expirado" name="TotalPass: link de pagamento expirado">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+                <section class="tp-hero tp-hero--compact" aria-label="Link expirado">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-mail"/></svg>
+                            Link expirado
+                        </span>
+                        <h1 class="tp-hero__title">Tempo esgotado</h1>
+                        <p class="tp-hero__subtitle">A página de pagamento expirou antes da conclusão.</p>
+                    </div>
+                </section>
+                <section class="tp-main">
+                    <div class="tp-main__inner">
+                        <div class="tp-success-card">
+                            <h2 class="tp-success-card__title">Solicite um novo link</h2>
+                            <p class="tp-success-card__body">
+                                Por segurança, o link de pagamento tem tempo limitado.
+                                Solicite um novo link e tente novamente.
+                            </p>
+                            <a class="tp-btn-secondary" href="/afr_totalpass/inscricao/reenviar">
+                                <svg width="16" height="16" aria-hidden="true"><use href="#tp-i-mail"/></svg>
+                                Solicitar novo link
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_totalpass_como_funciona" name="TotalPass: como funciona (página educativa)">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure tp-portal">
+                <t t-call="afr_totalpass.tp_icon_sprite"/>
+
+                <section class="tp-hero" aria-label="Como funciona o TotalPass">
+                    <div class="tp-hero__inner">
+                        <span class="tp-hero__badge">
+                            <svg aria-hidden="true" focusable="false" width="14" height="14"><use href="#tp-i-sparkle"/></svg>
+                            Benefício TotalPass
+                        </span>
+                        <h1 class="tp-hero__title">Como funciona o TotalPass</h1>
+                        <p class="tp-hero__subtitle">
+                            Da inscrição neste portal até o seu primeiro treino — veja cada passo.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="tp-main">
+                    <div class="tp-main__inner tp-doc">
+
+                        <div class="tp-block">
+                            <h2 class="tp-block__title">O que é o TotalPass</h2>
+                            <p class="tp-block__lead">
+                                O TotalPass é um benefício corporativo de atividade física e bem-estar:
+                                com uma mensalidade você acessa academias e estúdios parceiros
+                                pelo aplicativo TotalPass.
+                            </p>
+                            <div class="tp-features">
+                                <div class="tp-feature">
+                                    <span class="tp-feature__icon" aria-hidden="true"><svg><use href="#tp-i-dumbbell"/></svg></span>
+                                    <p class="tp-feature__title">Academias parceiras</p>
+                                    <p class="tp-feature__text">Rede de academias e estúdios conveniados.</p>
+                                </div>
+                                <div class="tp-feature">
+                                    <span class="tp-feature__icon" aria-hidden="true"><svg><use href="#tp-i-calendar"/></svg></span>
+                                    <p class="tp-feature__title">Mensalidade recorrente</p>
+                                    <p class="tp-feature__text">Cobrança mensal automática no cartão de crédito.</p>
+                                </div>
+                                <div class="tp-feature">
+                                    <span class="tp-feature__icon" aria-hidden="true"><svg><use href="#tp-i-heart"/></svg></span>
+                                    <p class="tp-feature__title">Bem-estar</p>
+                                    <p class="tp-feature__text">Treine quando e onde for melhor para você.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tp-steps-card">
+                            <h2 class="tp-steps-card__title">Sua jornada, passo a passo</h2>
+                            <ol class="tp-steps">
+                                <li class="tp-steps__item">
+                                    <strong>Elegibilidade pela empresa.</strong>
+                                    Nossa empresa liberou o benefício TotalPass para os colaboradores.
+                                </li>
+                                <li class="tp-steps__item">
+                                    <strong>Inscrição neste portal.</strong>
+                                    Preencha o formulário com nome, CPF, e-mail e endereço. Você recebe
+                                    no e-mail um link de confirmação válido por 24 horas (verifique spam
+                                    e promoções). Se expirar, solicite um novo link.
+                                </li>
+                                <li class="tp-steps__item">
+                                    <strong>Confirmação e pagamento.</strong>
+                                    Clique no link do e-mail e cadastre seu cartão de crédito para a
+                                    mensalidade. Só depois disso o benefício fica ativo.
+                                </li>
+                                <li class="tp-steps__item">
+                                    <strong>Cadastro no TotalPass.</strong>
+                                    Com a inscrição confirmada e o pagamento em dia, a empresa registra
+                                    você na plataforma TotalPass. Você será avisado quando estiver liberado.
+                                </li>
+                                <li class="tp-steps__item">
+                                    <strong>Baixe o app e treine.</strong>
+                                    Instale o aplicativo <strong>TotalPass</strong> na Google Play ou App
+                                    Store, acesse sua conta, escolha uma academia e faça o check-in.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <div class="tp-cta">
+                            <h2 class="tp-cta__title">Pronto para começar?</h2>
+                            <p class="tp-cta__text">Faça sua inscrição e ative o benefício TotalPass.</p>
+                            <a href="/afr_totalpass/inscricao" class="tp-btn-primary tp-cta__btn">
+                                <span class="tp-btn-primary__icon-idle" aria-hidden="true">
+                                    <svg width="20" height="20"><use href="#tp-i-arrow-right"/></svg>
+                                </span>
+                                <span class="tp-btn-primary__label-idle">Fazer inscrição</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>

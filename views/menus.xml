@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_afr_totalpass_root"
+        name="TotalPass"
+        groups="afr_totalpass.group_afr_totalpass_user"
+        sequence="80"
+    />
+    <menuitem
+        id="menu_totalpass_collaborator"
+        name="Colaboradores"
+        parent="menu_afr_totalpass_root"
+        action="action_totalpass_collaborator"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_totalpass_asaas_payment"
+        name="Cobranças Asaas"
+        parent="menu_afr_totalpass_root"
+        action="action_totalpass_asaas_payment"
+        sequence="20"
+        groups="afr_totalpass.group_afr_totalpass_manager"
+    />
+</odoo>

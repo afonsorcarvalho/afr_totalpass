@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="menu_totalpass_como_funciona" model="website.menu">
+            <field name="name">Como funciona TotalPass</field>
+            <field name="url">/afr_totalpass/como-funciona</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" eval="56"/>
+        </record>
+
+        <record id="menu_totalpass_inscricao" model="website.menu">
+            <field name="name">Inscrição TotalPass</field>
+            <field name="url">/afr_totalpass/inscricao</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" eval="57"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,680 @@
+# -*- coding: utf-8 -*-
+"""Cliente HTTP para a API v3 do Asaas (documentação: https://docs.asaas.com/reference/comece-por-aqui)."""
+
+import json
+import logging
+import re
+
+import requests
+
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
+
+ASAAS_PRODUCTION = "https://api.asaas.com"
+ASAAS_SANDBOX = "https://api-sandbox.asaas.com"
+
+# Frontend host (página hospedada de checkout, não da API). Usado para absolutizar
+# URLs relativas retornadas em POST /v3/checkouts (campo `link`/`url`/etc.).
+ASAAS_FRONTEND_PRODUCTION = "https://www.asaas.com"
+ASAAS_FRONTEND_SANDBOX = "https://sandbox.asaas.com"
+
+# Nome do grupo de clientes no Asaas para quem se inscreve pelo portal (campo groupName).
+# Documentação: CustomerSaveRequestDTO / CustomerUpdateRequestDTO — não há endpoint para
+# criar grupo vazio; o agrupamento existe ao atribuir groupName ao cliente.
+ASAAS_TOTALPASS_PORTAL_GROUP_NAME = "TotalPass"
+
+
+class AfrTotalPassAsaasApi(models.AbstractModel):
+    _name = "afr.totalpass.asaas.api"
+    _description = "Cliente API Asaas (TotalPass)"
+
+    @api.model
+    def _get_config_param(self, key, default=""):
+        return (
+            self.env["ir.config_parameter"].sudo().get_param(key, default) or default
+        )
+
+    @api.model
+    def _base_url(self):
+        env_type = self._get_config_param("afr_totalpass.asaas_environment", "sandbox")
+        if env_type == "production":
+            return ASAAS_PRODUCTION
+        return ASAAS_SANDBOX
+
+    @api.model
+    def _frontend_base_url(self):
+        env_type = self._get_config_param("afr_totalpass.asaas_environment", "sandbox")
+        if env_type == "production":
+            return ASAAS_FRONTEND_PRODUCTION
+        return ASAAS_FRONTEND_SANDBOX
+
+    @api.model
+    def _api_key(self):
+        key = self._get_config_param("afr_totalpass.asaas_api_key", "")
+        if not key:
+            raise UserError(_("Configure a chave de API Asaas nas configurações."))
+        return key
+
+    @api.model
+    def _request_timeout(self):
+        try:
+            return int(self._get_config_param("afr_totalpass.asaas_timeout", "30"))
+        except ValueError:
+            return 30
+
+    @api.model
+    def _headers(self):
+        return {
+            "access_token": self._api_key(),
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+    @api.model
+    def _parse_errors(self, response):
+        try:
+            body = response.json()
+        except ValueError:
+            return response.text or str(response.status_code)
+        errors = body.get("errors")
+        if isinstance(errors, list) and errors:
+            parts = []
+            for err in errors:
+                if isinstance(err, dict):
+                    code = err.get("code") or ""
+                    desc = err.get("description") or ""
+                    parts.append(f"{code}: {desc}".strip(": "))
+                else:
+                    parts.append(str(err))
+            return "; ".join(parts) if parts else json.dumps(body)
+        return json.dumps(body)
+
+    @api.model
+    def _request(self, method, path, params=None, json_body=None):
+        """Executa chamada à API. path começa com /v3/..."""
+        url = f"{self._base_url().rstrip('/')}{path}"
+        try:
+            response = requests.request(
+                method,
+                url,
+                headers=self._headers(),
+                params=params,
+                json=json_body,
+                timeout=self._request_timeout(),
+            )
+        except requests.RequestException as e:
+            _logger.warning("Asaas request failed: %s %s", method, path)
+            raise UserError(
+                _("Falha de comunicação com o Asaas: %s") % str(e)
+            ) from e
+        if response.status_code >= 400:
+            msg = self._parse_errors(response)
+            _logger.warning(
+                "Asaas HTTP %s %s: %s",
+                response.status_code,
+                path,
+                msg[:500],
+            )
+            raise UserError(
+                _("Erro Asaas (%(status)s): %(msg)s")
+                % {"status": response.status_code, "msg": msg}
+            )
+        if response.status_code == 204 or not response.content:
+            return {}
+        try:
+            return response.json()
+        except ValueError as e:
+            raise UserError(_("Resposta inválida do Asaas.")) from e
+
+    @api.model
+    def customer_find_by_external_reference(self, external_ref):
+        data = self._request(
+            "GET",
+            "/v3/customers",
+            params={"externalReference": external_ref, "limit": 10},
+        )
+        items = data.get("data") or []
+        if items:
+            return items[0].get("id")
+        return None
+
+    @api.model
+    def customer_find_by_cpf_cnpj(self, cpf_cnpj_digits):
+        """Localiza cliente existente por CPF/CNPJ (GET /v3/customers?cpfCnpj=…).
+
+        Documentação: https://docs.asaas.com/reference/list-customers — filtro cpfCnpj.
+        Ignora registros marcados como excluídos na resposta.
+        """
+        if not cpf_cnpj_digits:
+            return None
+        data = self._request(
+            "GET",
+            "/v3/customers",
+            params={"cpfCnpj": cpf_cnpj_digits, "limit": 20},
+        )
+        for item in data.get("data") or []:
+            if item.get("deleted"):
+                continue
+            cid = (item.get("id") or "").strip()
+            if cid:
+                return cid
+        return None
+
+    @api.model
+    def customer_create(self, payload):
+        return self._request("POST", "/v3/customers", json_body=payload)
+
+    @api.model
+    def customer_update(self, customer_id, payload):
+        """Atualiza cliente (PUT /v3/customers/{id}). Permissão CUSTOMER:WRITE."""
+        if not customer_id:
+            return {}
+        return self._request(
+            "PUT",
+            f"/v3/customers/{customer_id}",
+            json_body=payload,
+        )
+
+    @api.model
+    def customer_totalpass_group_has_any_customer_in_asaas(self):
+        """Indica se já existe pelo menos um cliente no Asaas com groupName «TotalPass».
+
+        GET /v3/customers?groupName=… — documentação «List Customers».
+        A API não expõe criação de grupo sem cliente; este método só informa se o nome
+        de grupo já está em uso (útil para log / diagnóstico).
+        """
+        data = self._request(
+            "GET",
+            "/v3/customers",
+            params={"groupName": ASAAS_TOTALPASS_PORTAL_GROUP_NAME, "limit": 1},
+        )
+        return bool(data.get("data"))
+
+    @api.model
+    def _totalpass_portal_group_payload(self, collaborator):
+        """Retorna {'groupName': 'TotalPass'} para todo colaborador (separa TotalPass dos demais
+        programas, ex. Wellhub/TotalPass, na mesma conta Asaas)."""
+        self.env["totalpass.collaborator"].browse(collaborator.id).ensure_one()
+        return {"groupName": ASAAS_TOTALPASS_PORTAL_GROUP_NAME}
+
+    @api.model
+    def _log_if_first_totalpass_group_customer(self):
+        """Registra em log quando ainda não há clientes com groupName «TotalPass» na conta."""
+        if self.customer_totalpass_group_has_any_customer_in_asaas():
+            return
+        _logger.info(
+            "Asaas: primeiro cliente atribuído ao grupo «%s» (groupName na API).",
+            ASAAS_TOTALPASS_PORTAL_GROUP_NAME,
+        )
+
+    @api.model
+    def _customer_ensure_apply_totalpass_group(self, collaborator, customer_id):
+        """Garante groupName no Asaas para colaboradores vindos do formulário público."""
+        extra = self._totalpass_portal_group_payload(collaborator)
+        if not extra:
+            return
+        self._log_if_first_totalpass_group_customer()
+        self.customer_update(customer_id, extra)
+
+    @api.model
+    def customer_ensure(self, collaborator):
+        """Garante cliente Asaas: externalReference, depois CPF/CNPJ, senão POST.
+
+        Se já existir cliente com o mesmo CPF/CNPJ na conta Asaas, não cria duplicata:
+        atualiza nome, e-mail, telefone e externalReference (vínculo TotalPass).
+
+        Inscrições pelo portal recebem ``groupName`` «TotalPass» (grupo no painel Asaas
+        conforme documentação do campo groupName; não há POST separado para «criar grupo»).
+        """
+        self.env["totalpass.collaborator"].browse(collaborator.id).ensure_one()
+        ext_ref = collaborator._asaas_external_reference()
+        group_extra = self._totalpass_portal_group_payload(collaborator)
+        if collaborator.asaas_customer_id:
+            self._customer_ensure_apply_totalpass_group(
+                collaborator, collaborator.asaas_customer_id
+            )
+            return collaborator.asaas_customer_id
+        existing = self.customer_find_by_external_reference(ext_ref)
+        if existing:
+            self._customer_ensure_apply_totalpass_group(collaborator, existing)
+            return existing
+        cpf_cnpj = re.sub(r"\D", "", collaborator.cpf_cnpj or "")
+        if not cpf_cnpj:
+            raise UserError(
+                _("CPF/CNPJ é obrigatório para criar o cliente no Asaas.")
+            )
+        phone_digits = re.sub(r"\D", "", collaborator.phone or "")
+        payload = {
+            "name": collaborator.name,
+            "cpfCnpj": cpf_cnpj,
+            "email": collaborator.email,
+            "externalReference": ext_ref,
+        }
+        if phone_digits:
+            payload["mobilePhone"] = phone_digits
+        # Endereço enviado ao criar/atualizar o customer para que o Checkout aceite reutilizá-lo
+        # via campo `customer` (sem precisar de customerData adicional).
+        cep_digits = re.sub(r"\D", "", collaborator.postal_code or "")
+        if collaborator.street:
+            payload["address"] = collaborator.street.strip()
+        if collaborator.street_number:
+            payload["addressNumber"] = collaborator.street_number.strip()
+        if cep_digits:
+            payload["postalCode"] = cep_digits
+        if collaborator.state_uf:
+            payload["province"] = collaborator.state_uf
+        if collaborator.city:
+            payload["city"] = collaborator.city.strip()
+        payload.update(group_extra)
+
+        existing_by_doc = self.customer_find_by_cpf_cnpj(cpf_cnpj)
+        if existing_by_doc:
+            _logger.info(
+                "Asaas: cliente existente por CPF/CNPJ (%s…), atualizando id=%s",
+                cpf_cnpj[:3],
+                existing_by_doc,
+            )
+            if group_extra:
+                self._log_if_first_totalpass_group_customer()
+            # Cliente pode já pertencer a outro programa (Wellhub/TotalPass) na mesma conta
+            # Asaas: não sobrescreve o externalReference dele; o vínculo local fica pelo id.
+            update_payload = dict(payload)
+            update_payload.pop("externalReference", None)
+            self.customer_update(existing_by_doc, update_payload)
+            return existing_by_doc
+
+        if group_extra:
+            self._log_if_first_totalpass_group_customer()
+        created = self.customer_create(payload)
+        return created.get("id")
+
+    @api.model
+    def _credit_card_fee_fixed(self):
+        """Taxa fixa (R$) por cobrança recebida no cartão — padrão divulgado na página Asaas."""
+        try:
+            return float(self._get_config_param("afr_totalpass.cc_fee_fixed", "0.49") or 0)
+        except ValueError:
+            return 0.49
+
+    @api.model
+    def _credit_card_fee_percent(self):
+        """Percentual sobre o valor total (cartão à vista na tabela pública Asaas)."""
+        try:
+            return float(self._get_config_param("afr_totalpass.cc_fee_percent", "2.99") or 0)
+        except ValueError:
+            return 2.99
+
+    @api.model
+    def _notification_package_fee(self):
+        """Pacote e-mail+SMS cobrado pelo Asaas por cobrança paga (valor público de referência)."""
+        try:
+            return float(
+                self._get_config_param("afr_totalpass.notification_package_fee", "0.99") or 0
+            )
+        except ValueError:
+            return 0.99
+
+    @api.model
+    def _subscription_base_value(self, collaborator):
+        """Valor base da assinatura (campo ou padrão nas configurações)."""
+        raw = collaborator.subscription_value
+        if raw is None or raw <= 0:
+            raw = float(
+                self._get_config_param("afr_totalpass.default_subscription_value", "0") or 0
+            )
+        return float(raw or 0)
+
+    @api.model
+    def subscription_net_before_card_fee_for_asaas(self, collaborator):
+        """Base + pacote de notificações e-mail/SMS (somados antes do gross-up do cartão).
+
+        Ordem: (valor assinatura) + (taxa pacote notif., se repasse ativo); em seguida aplica-se
+        taxa fixa + percentual do cartão sobre esse total, para o % incidir também sobre as notificações.
+        Taxas de notificação: https://docs.asaas.com/docs/notificacoes — valores em
+        https://www.asaas.com/precos-e-taxas (página pública cita R$ 0,99 pelo pacote por transação).
+        """
+        base = self._subscription_base_value(collaborator)
+        if base <= 0:
+            return 0.0
+        if collaborator.pass_asaas_notification_email_sms_fee:
+            base += self._notification_package_fee()
+        return base
+
+    @api.model
+    def compute_gross_subscription_value_from_net(self, net_amount):
+        """Valor bruto a cobrar no Asaas para que, após taxa fixa + % do cartão, reste net_amount.
+
+        Modelo alinhado à cobrança por transação: taxa = fixo + (percentual/100) * bruto;
+        líquido = bruto - taxa  =>  bruto = (líquido + fixo) / (1 - percentual/100).
+        O parâmetro net_amount deve já incluir repasses somados antes (ex.: pacote e-mail/SMS).
+        Referência de taxas de cartão: https://www.asaas.com/precos-e-taxas
+        """
+        net = float(net_amount or 0)
+        fixed = self._credit_card_fee_fixed()
+        pct = self._credit_card_fee_percent()
+        if pct >= 100:
+            raise UserError(
+                _("O percentual de taxa de cartão nas configurações deve ser menor que 100.")
+            )
+        divisor = 1.0 - (pct / 100.0)
+        if divisor <= 0:
+            raise UserError(_("Configuração inválida de taxa de cartão (percentual)."))
+        gross = (net + fixed) / divisor
+        return round(gross, 2)
+
+    @api.model
+    def subscription_value_for_asaas(self, collaborator):
+        """Valor (float) a enviar no campo value da assinatura no Asaas."""
+        adjusted = self.subscription_net_before_card_fee_for_asaas(collaborator)
+        if adjusted <= 0:
+            return 0.0
+        billing = collaborator._get_effective_billing_type()
+        if (
+            billing == "CREDIT_CARD"
+            and collaborator.pass_credit_card_fee_to_customer
+        ):
+            return self.compute_gross_subscription_value_from_net(adjusted)
+        return round(float(adjusted), 2)
+
+    @api.model
+    def subscription_get(self, subscription_id):
+        """GET /v3/subscriptions/{id} — confirma assinatura recorrente no Asaas."""
+        if not subscription_id:
+            return {}
+        return self._request("GET", f"/v3/subscriptions/{subscription_id}")
+
+    @api.model
+    def subscription_create(self, collaborator, customer_id):
+        """Cria assinatura recorrente: POST /v3/subscriptions (não POST /v3/payments).
+
+        Documentação: https://docs.asaas.com/reference/criar-nova-assinatura
+        Guia: https://docs.asaas.com/docs/assinaturas
+        """
+        value = self.subscription_value_for_asaas(collaborator)
+        if value <= 0:
+            raise UserError(_("Defina o valor da assinatura no colaborador ou nas configurações."))
+        billing = collaborator._get_effective_billing_type()
+        if billing == "UNDEFINED":
+            raise UserError(
+                _(
+                    "Para assinatura recorrente no Asaas, a forma de pagamento não pode ser "
+                    "'Indefinido'. Defina Pix, Boleto ou Cartão no colaborador ou nas configurações."
+                )
+            )
+        cycle = collaborator.subscription_cycle or self._get_config_param(
+            "afr_totalpass.default_cycle", "MONTHLY"
+        )
+        next_due = collaborator.next_due_date
+        if not next_due:
+            next_due = fields.Date.context_today(collaborator)
+        payload = {
+            "customer": customer_id,
+            "billingType": billing,
+            "value": value,
+            "nextDueDate": next_due.strftime("%Y-%m-%d"),
+            "cycle": cycle,
+            "description": _("[Assinatura recorrente TotalPass] %s") % collaborator.name,
+            "externalReference": collaborator._asaas_subscription_external_reference(),
+            "notifyCustomer": True,
+        }
+        # discount, interest, fine — opcionais na API Criar nova assinatura.
+        payload.update(collaborator._asaas_subscription_discount_interest_fine_payload())
+        result = self._request("POST", "/v3/subscriptions", json_body=payload)
+        sub_id = (result.get("id") or "").strip()
+        if not sub_id.startswith("sub_"):
+            raise UserError(
+                _(
+                    "O Asaas não retornou um id de assinatura (sub_…). "
+                    "Verifique permissão SUBSCRIPTION:WRITE na chave de API, o ambiente "
+                    "(sandbox/produção) e se a resposta não é de outro endpoint. "
+                    "Cobranças avulsas usam id pay_… (POST /v3/payments)."
+                )
+            )
+        obj = (result.get("object") or "").strip().lower()
+        if obj and obj != "subscription":
+            raise UserError(
+                _("Resposta inesperada do Asaas (object=%(obj)s). Esperado assinatura.")
+                % {"obj": result.get("object")}
+            )
+        return result
+
+    @api.model
+    def subscription_delete(self, subscription_id):
+        if not subscription_id:
+            return {}
+        return self._request("DELETE", f"/v3/subscriptions/{subscription_id}")
+
+    @api.model
+    def _checkout_external_reference(self, collaborator):
+        self.env["totalpass.collaborator"].browse(collaborator.id).ensure_one()
+        return f"afr_tp_co_{collaborator.id}"
+
+    @api.model
+    def _checkout_minutes_to_expire(self):
+        try:
+            raw = int(
+                self._get_config_param("afr_totalpass.checkout_minutes_to_expire", "1440")
+            )
+        except ValueError:
+            raw = 1440
+        return max(10, min(1440, raw))
+
+    @api.model
+    def _checkout_callback_urls(self):
+        base = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("web.base.url", "")
+            or ""
+        ).rstrip("/")
+        if not base:
+            raise UserError(
+                _("Configure web.base.url nas configurações antes de criar checkout no Asaas.")
+            )
+        return {
+            "successUrl": f"{base}/afr_totalpass/checkout/sucesso",
+            "cancelUrl": f"{base}/afr_totalpass/checkout/cancelado",
+            "expiredUrl": f"{base}/afr_totalpass/checkout/expirado",
+        }
+
+    @api.model
+    def _checkout_customer_data_payload(self, collaborator):
+        cpf_cnpj = re.sub(r"\D", "", collaborator.cpf_cnpj or "")
+        phone_digits = re.sub(r"\D", "", collaborator.phone or "")
+        cep_digits = re.sub(r"\D", "", collaborator.postal_code or "")
+        missing = []
+        if not (collaborator.street or "").strip():
+            missing.append(_("logradouro"))
+        if not (collaborator.street_number or "").strip():
+            missing.append(_("número"))
+        if not cep_digits:
+            missing.append(_("CEP"))
+        if not collaborator.state_uf:
+            missing.append(_("UF"))
+        if missing:
+            raise UserError(
+                _("Preencha o endereço do colaborador antes de gerar o checkout (faltando: %s).")
+                % ", ".join(missing)
+            )
+        data = {
+            "name": collaborator.name or "",
+            "email": collaborator.email or "",
+            "cpfCnpj": cpf_cnpj,
+            "address": (collaborator.street or "").strip(),
+            "addressNumber": (collaborator.street_number or "").strip(),
+            "postalCode": cep_digits,
+            "province": collaborator.state_uf,
+        }
+        if collaborator.city:
+            data["city"] = collaborator.city.strip()
+        if phone_digits:
+            data["phone"] = phone_digits
+        return data
+
+    @api.model
+    def _checkout_subscription_payload(self, collaborator):
+        cycle = collaborator.subscription_cycle or self._get_config_param(
+            "afr_totalpass.default_cycle", "MONTHLY"
+        )
+        next_due = collaborator.next_due_date or fields.Date.context_today(collaborator)
+        # externalReference + description no bloco subscription: doc oficial não documenta esses
+        # campos no Checkout, mas se Asaas aceitar evita o PUT pós-CHECKOUT_PAID. Caso o Asaas
+        # ignore, o handler do webhook chama subscription_update para garantir o estado correto.
+        payload = {
+            "cycle": cycle,
+            "nextDueDate": next_due.strftime("%Y-%m-%d"),
+            "externalReference": collaborator._asaas_subscription_external_reference(),
+            "description": _("[Assinatura recorrente TotalPass] %s") % (collaborator.name or ""),
+            # notifyCustomer aqui é tentativa de já habilitar notificações Asaas na criação da
+            # subscription via checkout; se Asaas ignorar, subscription_apply_local_metadata
+            # garante o estado correto via PUT no webhook CHECKOUT_PAID.
+            "notifyCustomer": True,
+        }
+        payload.update(collaborator._asaas_subscription_discount_interest_fine_payload())
+        return payload
+
+    @api.model
+    def subscription_update(self, subscription_id, payload):
+        """PUT /v3/subscriptions/{id} — usado após CHECKOUT_PAID para aplicar description,
+        discount, interest e fine que o Checkout não propagou.
+        """
+        if not subscription_id:
+            return {}
+        return self._request(
+            "PUT",
+            f"/v3/subscriptions/{subscription_id}",
+            json_body=payload,
+        )
+
+    @api.model
+    def subscription_apply_local_metadata(self, collaborator, subscription_id):
+        """Garante description + desconto/juros/multa na subscription criada via Checkout."""
+        if not subscription_id:
+            return {}
+        payload = {
+            "description": _("[Assinatura recorrente TotalPass] %s") % (collaborator.name or ""),
+            "notifyCustomer": True,
+        }
+        payload.update(collaborator._asaas_subscription_discount_interest_fine_payload())
+        return self.subscription_update(subscription_id, payload)
+
+    @api.model
+    def checkout_create(self, collaborator, customer_id=None):
+        """POST /v3/checkouts — cria checkout Asaas com assinatura recorrente (CREDIT_CARD).
+
+        Se `customer_id` for fornecido (Asaas customer já existente, dedupado via
+        `customer_ensure`), envia o campo `customer` e omite `customerData` — evita que o
+        Checkout crie um customer novo a cada chamada. Caso contrário, cai no fluxo com
+        `customerData` (Asaas cria customer baseado nos dados).
+
+        Documentação: https://docs.asaas.com/reference/criar-novo-checkout
+        Guia: https://docs.asaas.com/docs/checkout-com-assinatura-recorrente
+        """
+        self.env["totalpass.collaborator"].browse(collaborator.id).ensure_one()
+        value = self.subscription_value_for_asaas(collaborator)
+        if value <= 0:
+            raise UserError(
+                _("Defina o valor da assinatura no colaborador ou nas configurações.")
+            )
+        cpf_cnpj = re.sub(r"\D", "", collaborator.cpf_cnpj or "")
+        if not cpf_cnpj:
+            raise UserError(
+                _("CPF/CNPJ é obrigatório para criar o checkout no Asaas.")
+            )
+        payload = {
+            "billingTypes": ["CREDIT_CARD"],
+            "chargeTypes": ["RECURRENT"],
+            "minutesToExpire": self._checkout_minutes_to_expire(),
+            "callback": self._checkout_callback_urls(),
+            "items": [
+                {
+                    "name": _("Assinatura TotalPass"),
+                    "description": collaborator.name or "",
+                    "quantity": 1,
+                    "value": value,
+                }
+            ],
+            "subscription": self._checkout_subscription_payload(collaborator),
+            "externalReference": self._checkout_external_reference(collaborator),
+        }
+        if customer_id:
+            payload["customer"] = customer_id
+        else:
+            payload["customerData"] = self._checkout_customer_data_payload(collaborator)
+        return self._request("POST", "/v3/checkouts", json_body=payload)
+
+    @api.model
+    def checkout_get(self, checkout_id):
+        if not checkout_id:
+            return {}
+        return self._request("GET", f"/v3/checkouts/{checkout_id}")
+
+    @api.model
+    def checkout_extract_url(self, checkout_response):
+        """Resposta Asaas não documenta nome exato do campo URL — tenta candidatos comuns.
+
+        Se o valor retornado for relativo (ex.: `/checkoutSession/show/<uuid>`), prefixa com
+        o host do frontend Asaas (sandbox.asaas.com ou www.asaas.com) para evitar que o browser
+        siga o 303 contra o host do nosso portal e dispare 404 local.
+        """
+        if not isinstance(checkout_response, dict):
+            return ""
+        for key in ("url", "link", "checkoutUrl", "paymentLink", "invoiceUrl"):
+            value = checkout_response.get(key)
+            if not isinstance(value, str) or not value.strip():
+                continue
+            value = value.strip()
+            if value.startswith(("http://", "https://")):
+                return value
+            base = self._frontend_base_url().rstrip("/")
+            if not value.startswith("/"):
+                value = "/" + value
+            return base + value
+        return ""
+
+    @api.model
+    def subscription_find_by_external_reference(self, external_ref):
+        """GET /v3/subscriptions?externalReference= — usado quando webhook CHECKOUT_PAID não trazer subscription.id."""
+        if not external_ref:
+            return None
+        data = self._request(
+            "GET",
+            "/v3/subscriptions",
+            params={"externalReference": external_ref, "limit": 10},
+        )
+        for item in data.get("data") or []:
+            sid = (item.get("id") or "").strip()
+            if sid:
+                return sid
+        return None
+
+    @api.model
+    def subscription_find_latest_for_customer(self, customer_id):
+        """GET /v3/subscriptions?customer= — fallback quando externalReference da subscription criada via checkout não corresponde à nossa convenção."""
+        if not customer_id:
+            return None
+        data = self._request(
+            "GET",
+            "/v3/subscriptions",
+            params={"customer": customer_id, "limit": 10},
+        )
+        for item in data.get("data") or []:
+            sid = (item.get("id") or "").strip()
+            if sid:
+                return sid
+        return None
+
+    @api.model
+    def payments_list(self, customer_id=None, subscription_id=None, offset=0, limit=100):
+        params = {"offset": offset, "limit": min(limit, 100)}
+        if customer_id:
+            params["customer"] = customer_id
+        if subscription_id:
+            params["subscription"] = subscription_id
+        return self._request("GET", "/v3/payments", params=params)
+
+    @api.model
+    def payment_get(self, payment_id):
+        return self._request("GET", f"/v3/payments/{payment_id}")

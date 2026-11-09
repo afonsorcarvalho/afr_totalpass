@@ -1,0 +1,17 @@
+# Byte-compiled / cached Python (não versionar)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Rascunhos/screenshots para o agente — não versionar
+drafts/
+
+# IDE / editor
+.vscode/
+
+# Anotações locais
+TODO.md
+
+# Asset binário grande — distribuir fora do repo (scp/CDN)
+static/video/
